@@ -9,6 +9,9 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_openai import ChatOpenAI
 
 load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
+model = os.getenv("OPENAI_API_MODEL")
 
 
 class WeatherInfo(BaseModel):
@@ -18,11 +21,11 @@ class WeatherInfo(BaseModel):
 
 
 def get_weather_info(city: str) -> str:
-    """Return a JSON string with WeatherInfo for *city*, or {"error": "..."} on failure."""
     try:
-        model = ChatOpenAI(
-            model_name=os.getenv("OPENAI_API_MODEL", "gpt-4o-mini"),
-            temperature=0.7,
+        llm = ChatOpenAI(
+            api_key=api_key,
+            base_url=api_base,
+            model=model,
         )
 
         parser = PydanticOutputParser(pydantic_object=WeatherInfo)
@@ -37,7 +40,7 @@ def get_weather_info(city: str) -> str:
             partial_variables={"format_instructions": parser.get_format_instructions()},
         )
 
-        chain = prompt | model | parser
+        chain = prompt | llm | parser
 
         result: WeatherInfo = chain.invoke({"city": city})
         return result.model_dump_json(indent=2)
