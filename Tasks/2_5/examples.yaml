@@ -1,0 +1,83 @@
+# examples.yaml
+# Примеры вопросов по программированию с ответами, содержащими код
+# ВАЖНО: все фигурные скобки в коде удвоены ({{ }}), чтобы не конфликтовать с форматированием
+
+examples:
+  - question: "Как прочитать JSON-файл в Python?"
+    answer: |
+      Для чтения JSON-файла используется модуль `json`. Вот пример:
+      ```python
+      import json
+
+      with open("data.json", "r", encoding="utf-8") as f:
+          data = json.load(f)
+
+      print(data["name"])
+      ```
+      Функция `json.load()` преобразует содержимое файла в Python-объект (dict или list).
+
+  - question: "Как отфильтровать список чисел, оставив только чётные?"
+    answer: |
+      Самый питоничный способ — использовать list comprehension:
+      ```python
+      numbers = [1, 2, 3, 4, 5, 6, 7, 8]
+      evens = [n for n in numbers if n % 2 == 0]
+      print(evens)  # [2, 4, 6, 8]
+      ```
+      Альтернативно можно использовать `filter()`:
+      ```python
+      evens = list(filter(lambda x: x % 2 == 0, numbers))
+      ```
+
+  - question: "Как создать простой декоратор в Python?"
+    answer: |
+      Декоратор — это функция, которая принимает другую функцию и расширяет её поведение:
+      ```python
+      def timer(func):
+          import time
+          def wrapper(*args, **kwargs):
+              start = time.time()
+              result = func(*args, **kwargs)
+              print(f"{{func.__name__}} выполнилась за {{time.time() - start:.4f}} сек")
+              return result
+          return wrapper
+
+      @timer
+      def slow_function():
+          import time
+          time.sleep(1)
+      ```
+
+  - question: "Как отсортировать список объектов по полю в Python?"
+    answer: |
+      Используйте `sorted()` с параметром `key` или метод `.sort()`:
+      ```python
+      class Person:
+          def __init__(self, name, age):
+              self.name = name
+              self.age = age
+          def __repr__(self):
+              return f"{{self.name}} ({{self.age}})"
+
+      persons = [Person("Анна", 25), Person("Борис", 20), Person("Вика", 30)]
+
+      # По возрастанию
+      by_age = sorted(persons, key=lambda p: p.age)
+      print(by_age)  # [Борис (20), Анна (25), Вика (30)]
+
+      # По убыванию
+      by_age_desc = sorted(persons, key=lambda p: p.age, reverse=True)
+      ```
+      `key` принимает функцию, которая извлекает значение для сравнения.
+
+  - question: "Как объединить два словаря в Python?"
+    answer: |
+      Начиная с Python 3.9, самый простой способ — оператор `|`:
+      ```python
+      a = {{"x": 1, "y": 2}}
+      b = {{"y": 3, "z": 4}}
+
+      merged = a | b
+      print(merged)  # {{'x': 1, 'y': 3, 'z': 4}}
+      ```
+      Для старых версий Python используйте `{{**a, **b}}` или `a.update(b)`.
